@@ -1,7 +1,7 @@
 package com.educandoweb.course.controller;
 
-import com.educandoweb.course.domain.entity.User;
-import com.educandoweb.course.service.UserService;
+import com.educandoweb.course.domain.entity.Category;
+import com.educandoweb.course.service.CategoryService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -26,19 +26,19 @@ import static org.springframework.http.HttpStatus.CREATED;
 
 @Slf4j
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/category")
 @RequiredArgsConstructor
-public class UserController {
+public class CategoryController {
 
-    private static final String CLASS_NAME = UserController.class.getSimpleName();
+    private static final String CLASS_NAME = CategoryController.class.getSimpleName();
 
-    private final UserService service;
+    private final CategoryService service;
 
     @PostMapping
-    private ResponseEntity<User> saveUser(@RequestBody User request) {
+    private ResponseEntity<Category> saveCategory(@RequestBody Category request) {
         log.info(logBuilder(LOG_INFO, LOG_KEY_REQUEST), CLASS_NAME, getMethodName(), STEP_START);
 
-        User response = service.saveUser(request);
+        Category response = service.saveCategory(request);
 
         log.info(logBuilder(LOG_INFO, LOG_KEY_REQUEST), CLASS_NAME, getMethodName(), STEP_END);
 
@@ -46,10 +46,10 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    private ResponseEntity<User> findUserById(@PathVariable Long id) {
+    private ResponseEntity<Category> findCategoryById(@PathVariable Long id) {
         log.info(logBuilder(LOG_INFO, LOG_KEY_REQUEST), CLASS_NAME, getMethodName(), STEP_START);
 
-        User response = service.findUserById(id);
+        Category response = service.findCategoryById(id);
 
         log.info(logBuilder(LOG_INFO, LOG_KEY_REQUEST), CLASS_NAME, getMethodName(), STEP_END);
 
@@ -57,10 +57,10 @@ public class UserController {
     }
 
     @GetMapping("/list-all")
-    private ResponseEntity<List<User>> findAllUsers() {
+    private ResponseEntity<List<Category>> findAllCategorys() {
         log.info(logBuilder(LOG_INFO, LOG_KEY_REQUEST), CLASS_NAME, getMethodName(), STEP_START);
 
-        List<User> response = service.findAllUsers();
+        List<Category> response = service.findAllCategorys();
 
         log.info(logBuilder(LOG_INFO, LOG_KEY_REQUEST), CLASS_NAME, getMethodName(), STEP_END);
 
@@ -68,10 +68,10 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    private ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User request) {
+    private ResponseEntity<Category> updateCategory(@PathVariable Long id, @RequestBody Category request) {
         log.info(logBuilder(LOG_INFO, LOG_KEY_REQUEST), CLASS_NAME, getMethodName(), STEP_START);
 
-        User response = service.updateUser(id, request);
+        Category response = service.updateCategory(id, request);
 
         log.info(logBuilder(LOG_INFO, LOG_KEY_REQUEST), CLASS_NAME, getMethodName(), STEP_END);
 
@@ -79,10 +79,10 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    private ResponseEntity<User> updateUser(@PathVariable Long id) {
+    private ResponseEntity<Category> updateCategory(@PathVariable Long id) {
         log.info(logBuilder(LOG_INFO, LOG_KEY_REQUEST), CLASS_NAME, getMethodName(), STEP_START);
 
-        service.deleteUser(id);
+        service.deleteCategory(id);
 
         log.info(logBuilder(LOG_INFO, LOG_KEY_REQUEST), CLASS_NAME, getMethodName(), STEP_END);
 

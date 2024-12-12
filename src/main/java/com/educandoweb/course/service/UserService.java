@@ -3,70 +3,94 @@ package com.educandoweb.course.service;
 import com.educandoweb.course.domain.entity.User;
 import com.educandoweb.course.repository.GenericRepository;
 import com.educandoweb.course.repository.UserRepository;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import static java.util.Optional.of;
+import static com.educandoweb.course.util.Constants.ENTITY_EXISTS;
+import static com.educandoweb.course.util.Constants.OPERATION_END;
+import static com.educandoweb.course.util.Constants.OPERATION_SAVE_FAIL;
+import static com.educandoweb.course.util.Constants.OPERATION_SEARCH_COMPLETE;
+import static com.educandoweb.course.util.Constants.OPERATION_START;
+import static com.educandoweb.course.util.Constants.OPERATION_UPDATE_FAIL;
 
 @Slf4j
 @Service
 public class UserService extends GenericService<User> {
 
-    @Autowired
-    private UserRepository userRepository;
+    private UserRepository repository;
 
-    public UserService(GenericRepository<User> repository) {
-        super(repository);
+    public UserService(GenericRepository<User> repository, MessageSource messageSource) {
+        super(repository, messageSource);
+        this.repository = (UserRepository) repository;
     }
 
-    public User saveUser(User user) {
-        log.info("Saving user: {}", user);
+    public User saveUser(User request) {
+        loggingOperation(OPERATION_START, User.class);
 
-        if (isUsernameOrEmailExists(user)) {
-            return null;
-        }
+        isUsernameOrEmailExists(request.getNmUser(), request.getDsEmail(), OPERATION_SAVE_FAIL);
 
-        return save(user);
+        User response = save(request, User.class);
+
+        loggingOperation(OPERATION_END, User.class);
+
+        return response;
     }
 
     public User findUserById(Long id) {
-        return findById(id);
+        loggingOperation(OPERATION_START, User.class);
+
+        User response = findById(id, User.class);
+
+        loggingOperation(OPERATION_END, User.class);
+
+        return response;
     }
 
     public List<User> findAllUsers() {
-        return findAll();
+        loggingOperation(OPERATION_START, User.class);
+
+        List<User> response = findAll(User.class);
+
+        loggingOperation(OPERATION_END, User.class);
+
+        return response;
     }
 
-    public User updateUser(Long id, User user) {
+    public User updateUser(Long id, User request) {
+        loggingOperation(OPERATION_START, User.class);
+
         User oldUser = findUserById(id);
 
-        boolean isNmUserChanged = !user.getNmUser().equals(oldUser.getNmUser());
-        boolean isDsEmailChanged = !user.getDsEmail().equals(oldUser.getDsEmail());
+        boolean isNmUserChanged = !request.getNmUser().equals(oldUser.getNmUser());
+        boolean isDsEmailChanged = !request.getDsEmail().equals(oldUser.getDsEmail());
 
         if (isNmUserChanged || isDsEmailChanged) {
-            if (isUsernameOrEmailExists(user)) {
-                return null;
-            }
+            isUsernameOrEmailExists(request.getNmUser(), request.getDsEmail(), OPERATION_UPDATE_FAIL);
         }
 
-        return update(id, user);
+        User response = update(id, request, User.class);
+
+        loggingOperation(OPERATION_END, User.class);
+
+        return response;
     }
 
     public void deleteUser(Long id) {
-        if (isUserExists(id)) {
-            delete(id);
+        loggingOperation(OPERATION_START, User.class);
+
+        delete(id, User.class);
+
+        loggingOperation(OPERATION_END, User.class);
+    }
+
+    private void isUsernameOrEmailExists(String user, String email, String errorMessage) {
+        if(repository.existsByNmUserOrDsEmail(user, email)) {
+            String message = getMessage(errorMessage);
+            log.error(message);
+            throw new RuntimeException(message);
         }
-    }
-
-    private boolean isUserExists(Long id) {
-        return isExists(id);
-    }
-
-    private boolean isUsernameOrEmailExists(User user) {
-        return userRepository.existsByNmUserOrDsEmail(user.getNmUser(), user.getDsEmail());
     }
 }

@@ -1,7 +1,7 @@
 package com.educandoweb.course.controller;
 
-import com.educandoweb.course.domain.entity.User;
-import com.educandoweb.course.service.UserService;
+import com.educandoweb.course.domain.entity.Payment;
+import com.educandoweb.course.service.PaymentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -26,19 +26,19 @@ import static org.springframework.http.HttpStatus.CREATED;
 
 @Slf4j
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/payment")
 @RequiredArgsConstructor
-public class UserController {
+public class PaymentController {
 
-    private static final String CLASS_NAME = UserController.class.getSimpleName();
+    private static final String CLASS_NAME = PaymentController.class.getSimpleName();
 
-    private final UserService service;
+    private final PaymentService service;
 
     @PostMapping
-    private ResponseEntity<User> saveUser(@RequestBody User request) {
+    private ResponseEntity<Payment> savePayment(@RequestBody Payment request) {
         log.info(logBuilder(LOG_INFO, LOG_KEY_REQUEST), CLASS_NAME, getMethodName(), STEP_START);
 
-        User response = service.saveUser(request);
+        Payment response = service.savePayment(request);
 
         log.info(logBuilder(LOG_INFO, LOG_KEY_REQUEST), CLASS_NAME, getMethodName(), STEP_END);
 
@@ -46,10 +46,10 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    private ResponseEntity<User> findUserById(@PathVariable Long id) {
+    private ResponseEntity<Payment> findPaymentById(@PathVariable Long id) {
         log.info(logBuilder(LOG_INFO, LOG_KEY_REQUEST), CLASS_NAME, getMethodName(), STEP_START);
 
-        User response = service.findUserById(id);
+        Payment response = service.findPaymentById(id);
 
         log.info(logBuilder(LOG_INFO, LOG_KEY_REQUEST), CLASS_NAME, getMethodName(), STEP_END);
 
@@ -57,10 +57,10 @@ public class UserController {
     }
 
     @GetMapping("/list-all")
-    private ResponseEntity<List<User>> findAllUsers() {
+    private ResponseEntity<List<Payment>> findAllPayments() {
         log.info(logBuilder(LOG_INFO, LOG_KEY_REQUEST), CLASS_NAME, getMethodName(), STEP_START);
 
-        List<User> response = service.findAllUsers();
+        List<Payment> response = service.findAllPayments();
 
         log.info(logBuilder(LOG_INFO, LOG_KEY_REQUEST), CLASS_NAME, getMethodName(), STEP_END);
 
@@ -68,10 +68,10 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    private ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User request) {
+    private ResponseEntity<Payment> updatePayment(@PathVariable Long id, @RequestBody Payment request) {
         log.info(logBuilder(LOG_INFO, LOG_KEY_REQUEST), CLASS_NAME, getMethodName(), STEP_START);
 
-        User response = service.updateUser(id, request);
+        Payment response = service.updatePayment(id, request);
 
         log.info(logBuilder(LOG_INFO, LOG_KEY_REQUEST), CLASS_NAME, getMethodName(), STEP_END);
 
@@ -79,10 +79,10 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    private ResponseEntity<User> updateUser(@PathVariable Long id) {
+    private ResponseEntity<Payment> updatePayment(@PathVariable Long id) {
         log.info(logBuilder(LOG_INFO, LOG_KEY_REQUEST), CLASS_NAME, getMethodName(), STEP_START);
 
-        service.deleteUser(id);
+        service.deletePayment(id);
 
         log.info(logBuilder(LOG_INFO, LOG_KEY_REQUEST), CLASS_NAME, getMethodName(), STEP_END);
 

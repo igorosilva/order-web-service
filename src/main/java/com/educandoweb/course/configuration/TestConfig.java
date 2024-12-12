@@ -1,8 +1,7 @@
-package com.educandoweb.course.config;
+package com.educandoweb.course.configuration;
 
 import com.educandoweb.course.domain.entity.Order;
 import com.educandoweb.course.domain.entity.User;
-import com.educandoweb.course.domain.enums.OrderStatus;
 import com.educandoweb.course.repository.OrderRepository;
 import com.educandoweb.course.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -11,8 +10,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import static com.educandoweb.course.domain.enums.OrderStatus.WAITING_PAYMENT;

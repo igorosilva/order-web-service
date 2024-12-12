@@ -1,7 +1,7 @@
 package com.educandoweb.course.controller;
 
-import com.educandoweb.course.domain.entity.User;
-import com.educandoweb.course.service.UserService;
+import com.educandoweb.course.domain.entity.Order;
+import com.educandoweb.course.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -26,19 +26,19 @@ import static org.springframework.http.HttpStatus.CREATED;
 
 @Slf4j
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/order")
 @RequiredArgsConstructor
-public class UserController {
+public class OrderController {
 
-    private static final String CLASS_NAME = UserController.class.getSimpleName();
+    private static final String CLASS_NAME = OrderController.class.getSimpleName();
 
-    private final UserService service;
+    private final OrderService service;
 
     @PostMapping
-    private ResponseEntity<User> saveUser(@RequestBody User request) {
+    private ResponseEntity<Order> saveOrder(@RequestBody Order request) {
         log.info(logBuilder(LOG_INFO, LOG_KEY_REQUEST), CLASS_NAME, getMethodName(), STEP_START);
 
-        User response = service.saveUser(request);
+        Order response = service.saveOrder(request);
 
         log.info(logBuilder(LOG_INFO, LOG_KEY_REQUEST), CLASS_NAME, getMethodName(), STEP_END);
 
@@ -46,10 +46,10 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    private ResponseEntity<User> findUserById(@PathVariable Long id) {
+    private ResponseEntity<Order> findOrderById(@PathVariable Long id) {
         log.info(logBuilder(LOG_INFO, LOG_KEY_REQUEST), CLASS_NAME, getMethodName(), STEP_START);
 
-        User response = service.findUserById(id);
+        Order response = service.findOrderById(id);
 
         log.info(logBuilder(LOG_INFO, LOG_KEY_REQUEST), CLASS_NAME, getMethodName(), STEP_END);
 
@@ -57,10 +57,10 @@ public class UserController {
     }
 
     @GetMapping("/list-all")
-    private ResponseEntity<List<User>> findAllUsers() {
+    private ResponseEntity<List<Order>> findAllOrders() {
         log.info(logBuilder(LOG_INFO, LOG_KEY_REQUEST), CLASS_NAME, getMethodName(), STEP_START);
 
-        List<User> response = service.findAllUsers();
+        List<Order> response = service.findAllOrders();
 
         log.info(logBuilder(LOG_INFO, LOG_KEY_REQUEST), CLASS_NAME, getMethodName(), STEP_END);
 
@@ -68,10 +68,10 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    private ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User request) {
+    private ResponseEntity<Order> updateOrder(@PathVariable Long id, @RequestBody Order request) {
         log.info(logBuilder(LOG_INFO, LOG_KEY_REQUEST), CLASS_NAME, getMethodName(), STEP_START);
 
-        User response = service.updateUser(id, request);
+        Order response = service.updateOrder(id, request);
 
         log.info(logBuilder(LOG_INFO, LOG_KEY_REQUEST), CLASS_NAME, getMethodName(), STEP_END);
 
@@ -79,10 +79,10 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    private ResponseEntity<User> updateUser(@PathVariable Long id) {
+    private ResponseEntity<Order> updateOrder(@PathVariable Long id) {
         log.info(logBuilder(LOG_INFO, LOG_KEY_REQUEST), CLASS_NAME, getMethodName(), STEP_START);
 
-        service.deleteUser(id);
+        service.deleteOrder(id);
 
         log.info(logBuilder(LOG_INFO, LOG_KEY_REQUEST), CLASS_NAME, getMethodName(), STEP_END);
 
