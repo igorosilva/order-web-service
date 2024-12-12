@@ -2,19 +2,22 @@ package com.educandoweb.course.util;
 
 import com.educandoweb.course.controller.UserController;
 
+import static java.util.Arrays.stream;
+import static java.util.stream.Collectors.joining;
+
 public class Utils {
 
     public static final String className = UserController.class.getSimpleName();
-    public static final String methodName = Thread.currentThread().getStackTrace()[1].getMethodName();
+
+    public static String getMethodName() {
+        return Thread.currentThread().getStackTrace()[2].getMethodName();
+    }
 
     public static String logBuilder(String... args) {
-        StringBuilder log = new StringBuilder();
+        return stream(args).collect(joining(" "));
+    }
 
-        for (String arg : args) {
-
-            log.append(arg).append(" ");
-        }
-
-        return log.toString().trim();
+    public static Class<?> getObjectClass(Object object) {
+        return object.getClass();
     }
 }
