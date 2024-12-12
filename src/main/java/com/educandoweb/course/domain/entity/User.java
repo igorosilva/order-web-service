@@ -1,5 +1,6 @@
 package com.educandoweb.course.domain.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.Entity;
@@ -22,6 +23,7 @@ import java.util.List;
 
 import static com.educandoweb.course.domain.entity.Order.Fields.user;
 import static com.educandoweb.course.util.Constants.TB_USER;
+import static com.fasterxml.jackson.annotation.JsonFormat.Shape.STRING;
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 import static jakarta.persistence.GenerationType.IDENTITY;
 
@@ -55,12 +57,14 @@ public class User implements Serializable {
     @JsonProperty("password")
     private String dsPassword;
 
-    @JsonProperty("createdAt")
     @CreationTimestamp
+    @JsonProperty("createdAt")
+    @JsonFormat(shape = STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime _createdAt;
 
-    @JsonProperty("updatedAt")
     @UpdateTimestamp
+    @JsonProperty("updatedAt")
+    @JsonFormat(shape = STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime _updatedAt;
 
     @OneToMany(mappedBy = user)

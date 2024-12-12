@@ -1,6 +1,8 @@
 package com.educandoweb.course.domain.entity;
 
 import com.educandoweb.course.domain.enums.OrderStatus;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.CascadeType;
@@ -24,7 +26,9 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static com.educandoweb.course.util.Constants.TB_ORDER;
+import static com.fasterxml.jackson.annotation.JsonFormat.Shape.STRING;
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
+import static jakarta.persistence.CascadeType.ALL;
 import static jakarta.persistence.GenerationType.IDENTITY;
 
 @Data
@@ -45,19 +49,22 @@ public class Order implements Serializable {
     @JsonProperty("code")
     private Long id;
 
-    @JsonProperty("moment")
+    @JsonProperty("orderedAt")
+    @JsonFormat(shape = STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime _orderedAt;
 
     @JsonProperty("status")
     private OrderStatus orderStatus;
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     @JsonProperty("items")
+    @OneToMany(mappedBy = "order", cascade = ALL, orphanRemoval = true)
     private List<OrderItem> productList;
 
     @ManyToOne
-    @JoinColumn(name = "client_id")
+    @JsonIgnore
     @JsonProperty("client")
+    @JoinColumn(name = "client_id")
     private User user;
 
     @ManyToOne

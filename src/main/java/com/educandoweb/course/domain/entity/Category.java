@@ -1,5 +1,6 @@
 package com.educandoweb.course.domain.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.CascadeType;
@@ -45,6 +46,7 @@ public class Category implements Serializable {
     private String dsName;
 
     @ManyToMany
+    @JsonIgnore
     @JsonProperty("products")
     private List<Product> productList;
 }

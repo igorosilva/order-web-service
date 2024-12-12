@@ -1,5 +1,6 @@
 package com.educandoweb.course.domain.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.CascadeType;
@@ -21,6 +22,7 @@ import java.util.List;
 
 import static com.educandoweb.course.util.Constants.TB_PRODUCT;
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
+import static jakarta.persistence.CascadeType.ALL;
 import static jakarta.persistence.GenerationType.IDENTITY;
 
 @Data
@@ -61,7 +63,8 @@ public class Product implements Serializable {
     @JsonProperty("orders")
     private List<Order> orderList;
 
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
+    @JsonIgnore
     @JsonProperty("orders")
+    @OneToMany(mappedBy = "product", cascade = ALL)
     private List<OrderItem> orderItems;
 }
