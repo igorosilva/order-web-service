@@ -6,11 +6,22 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum OrderStatus {
-    WAITING_PAYMENT(0),
-    PAID(1),
-    SHIPPED(2),
-    DELIVERED(3),
-    CANCELED(4);
+    WAITING_PAYMENT(0, "Waiting Payment"),
+    PAID(1, "Paid"),
+    SHIPPED(2, "Shipeed"),
+    DELIVERED(3, "Delivered"),
+    CANCELED(4, "Canceled");
 
-    private int status;
+    private int code;
+    private String descriptions;
+
+    public static OrderStatus valueOf(int code) {
+        for (OrderStatus orderStatus : OrderStatus.values()) {
+            if(orderStatus.getCode() == code) {
+                return orderStatus;
+            }
+        }
+
+        return null;
+    }
 }
