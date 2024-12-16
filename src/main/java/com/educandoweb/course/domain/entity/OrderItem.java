@@ -1,11 +1,9 @@
 package com.educandoweb.course.domain.entity;
 
+import com.educandoweb.course.domain.entity.pk.OrderItemPK;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,8 +14,8 @@ import lombok.experimental.FieldNameConstants;
 
 import java.io.Serializable;
 
+import static com.educandoweb.course.util.Constants.TB_ORDER_ITEM;
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
-import static jakarta.persistence.GenerationType.IDENTITY;
 
 @Data
 @Entity
@@ -26,27 +24,17 @@ import static jakarta.persistence.GenerationType.IDENTITY;
 @EqualsAndHashCode
 @AllArgsConstructor
 @FieldNameConstants
-@Table(name = "order_item")
 @JsonInclude(NON_NULL)
+@Table(name = TB_ORDER_ITEM)
 public class OrderItem implements Serializable {
 
     private static final long serialVersionUID = 4575268264182501270L;
 
-    @Id
-    @GeneratedValue(strategy = IDENTITY)
-    private Long id;
+    @EmbeddedId
+    private OrderItemPK id = new OrderItemPK();
 
     private Integer quantity;
-
     private Double price;
-
-    @ManyToOne
-    @JoinColumn(name = "order_id")
-    private Order order;
-
-    @ManyToOne
-    @JoinColumn(name = "product_id")
-    private Product product;
 
     public Double subTotal() {
         return this.price * this.quantity;
