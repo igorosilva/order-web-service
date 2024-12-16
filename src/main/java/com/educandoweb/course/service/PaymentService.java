@@ -16,6 +16,8 @@ import static com.educandoweb.course.util.Constants.OPERATION_START;
 @Service
 public class PaymentService extends GenericService<Payment> {
 
+    private final static Class<Payment> PAYMENT_CLASS = Payment.class;
+
     private PaymentRepository repository;
 
     public PaymentService(GenericRepository<Payment> repository, MessageSource messageSource) {
@@ -24,50 +26,50 @@ public class PaymentService extends GenericService<Payment> {
     }
 
     public Payment savePayment(Payment request) {
-        loggingOperation(OPERATION_START, Payment.class);
+        loggingOperation(OPERATION_START, PAYMENT_CLASS);
 
-        Payment response = save(request, Payment.class);
+        Payment response = create(request, PAYMENT_CLASS);
         
-        loggingOperation(OPERATION_END, Payment.class);
+        loggingOperation(OPERATION_END, PAYMENT_CLASS);
 
         return response;
     }
 
     public Payment findPaymentById(Long id) {
-        loggingOperation(OPERATION_START, Payment.class);
+        loggingOperation(OPERATION_START, PAYMENT_CLASS);
 
-        Payment response = findById(id, Payment.class);
+        Payment response = findById(id, PAYMENT_CLASS);
         
-        loggingOperation(OPERATION_END, Payment.class);
+        loggingOperation(OPERATION_END, PAYMENT_CLASS);
         
         return response;
     }
 
     public List<Payment> findAllPayments() {
-        loggingOperation(OPERATION_START, Payment.class);
+        loggingOperation(OPERATION_START, PAYMENT_CLASS);
 
-        List<Payment> response = findAll(Payment.class);
+        List<Payment> response = findAll(PAYMENT_CLASS);
         
-        loggingOperation(OPERATION_END, Payment.class);
+        loggingOperation(OPERATION_END, PAYMENT_CLASS);
         
         return response;
     }
 
     public Payment updatePayment(Long id, Payment request) {
-        loggingOperation(OPERATION_START, Payment.class);
+        loggingOperation(OPERATION_START, PAYMENT_CLASS);
 
-        Payment response = update(id, request, Payment.class);
+        Payment response = update(id, request, PAYMENT_CLASS);
 
-        loggingOperation(OPERATION_END, Payment.class);
+        loggingOperation(OPERATION_END, PAYMENT_CLASS);
 
         return response;
     }
 
     public void deletePayment(Long id) {
-        loggingOperation(OPERATION_START, Payment.class);
+        loggingOperation(OPERATION_START, PAYMENT_CLASS);
 
-        delete(id, Payment.class);
+        delete(id, PAYMENT_CLASS);
 
-        loggingOperation(OPERATION_END, Payment.class);
+        loggingOperation(OPERATION_END, PAYMENT_CLASS);
     }
 }
