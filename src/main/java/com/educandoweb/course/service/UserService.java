@@ -9,16 +9,19 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import static com.educandoweb.course.util.Constants.ENTITY_EXISTS;
+import static com.educandoweb.course.domain.enums.OrderStatus.SHIPPED;
+import static com.educandoweb.course.util.Constants.OPERATION_DELETE_FAIL;
 import static com.educandoweb.course.util.Constants.OPERATION_END;
+import static com.educandoweb.course.util.Constants.OPERATION_SAVE_COMPLETE;
 import static com.educandoweb.course.util.Constants.OPERATION_SAVE_FAIL;
-import static com.educandoweb.course.util.Constants.OPERATION_SEARCH_COMPLETE;
 import static com.educandoweb.course.util.Constants.OPERATION_START;
 import static com.educandoweb.course.util.Constants.OPERATION_UPDATE_FAIL;
 
 @Slf4j
 @Service
 public class UserService extends GenericService<User> {
+
+    private static final Class<User> USER_CLASS = User.class;
 
     private UserRepository repository;
 
@@ -28,66 +31,86 @@ public class UserService extends GenericService<User> {
     }
 
     public User saveUser(User request) {
-        loggingOperation(OPERATION_START, User.class);
+        loggingOperation(OPERATION_START, USER_CLASS);
 
         isUsernameOrEmailExists(request.getNmUser(), request.getDsEmail(), OPERATION_SAVE_FAIL);
 
-        User response = save(request, User.class);
+        if (request.getDsPassword().isBlank()) {
+            loggingError(OPERATION_SAVE_FAIL, USER_CLASS);
+            throw new RuntimeException("Your password can't be null or empty");
+        }
 
-        loggingOperation(OPERATION_END, User.class);
+        User response = create(request, USER_CLASS);
+
+        loggingOperation(OPERATION_END, USER_CLASS);
 
         return response;
     }
 
     public User findUserById(Long id) {
-        loggingOperation(OPERATION_START, User.class);
+        loggingOperation(OPERATION_START, USER_CLASS);
 
-        User response = findById(id, User.class);
+        User response = findById(id, USER_CLASS);
 
-        loggingOperation(OPERATION_END, User.class);
+        loggingOperation(OPERATION_END, USER_CLASS);
 
         return response;
     }
 
     public List<User> findAllUsers() {
-        loggingOperation(OPERATION_START, User.class);
+        loggingOperation(OPERATION_START, USER_CLASS);
 
-        List<User> response = findAll(User.class);
+        List<User> response = findAll(USER_CLASS);
 
-        loggingOperation(OPERATION_END, User.class);
+        loggingOperation(OPERATION_END, USER_CLASS);
 
         return response;
     }
 
     public User updateUser(Long id, User request) {
-        loggingOperation(OPERATION_START, User.class);
+        loggingOperation(OPERATION_START, USER_CLASS);
 
         User oldUser = findUserById(id);
 
-        boolean isNmUserChanged = !request.getNmUser().equals(oldUser.getNmUser());
-        boolean isDsEmailChanged = !request.getDsEmail().equals(oldUser.getDsEmail());
+        String username = request.getNmUser();
+        String email = request.getDsEmail();
+
+        boolean isNmUserChanged = !username.equals(oldUser.getNmUser());
+        boolean isDsEmailChanged = !email.equals(oldUser.getDsEmail());
 
         if (isNmUserChanged || isDsEmailChanged) {
-            isUsernameOrEmailExists(request.getNmUser(), request.getDsEmail(), OPERATION_UPDATE_FAIL);
+            isUsernameOrEmailExists(username, email, OPERATION_UPDATE_FAIL);
         }
 
-        User response = update(id, request, User.class);
+        User response = update(id, request, USER_CLASS);
 
-        loggingOperation(OPERATION_END, User.class);
+        loggingOperation(OPERATION_END, USER_CLASS);
 
         return response;
     }
 
     public void deleteUser(Long id) {
-        loggingOperation(OPERATION_START, User.class);
+        loggingOperation(OPERATION_START, USER_CLASS);
 
-        delete(id, User.class);
+        User response = findUserById(id);
 
-        loggingOperation(OPERATION_END, User.class);
+        if (!response.getOrderList().isEmpty()) {
+            response.getOrderList().stream()
+                    .filter(order -> SHIPPED.equals(order.getOrderStatus()))
+                    .findFirst()
+                    .ifPresent(order -> {
+                        loggingError(OPERATION_DELETE_FAIL, USER_CLASS);
+                        throw new RuntimeException("An user with shipped order can't be deleted");
+                    });
+        }
+
+        delete(id, USER_CLASS);
+
+        loggingOperation(OPERATION_END, USER_CLASS);
     }
 
     private void isUsernameOrEmailExists(String user, String email, String errorMessage) {
-        if(repository.existsByNmUserOrDsEmail(user, email)) {
+        if (repository.existsByNmUserOrDsEmail(user, email)) {
             String message = getMessage(errorMessage);
             log.error(message);
             throw new RuntimeException(message);
