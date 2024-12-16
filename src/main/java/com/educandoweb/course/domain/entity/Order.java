@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
@@ -23,7 +22,6 @@ import lombok.experimental.FieldNameConstants;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
 
 import static com.educandoweb.course.util.Constants.TB_ORDER;
 import static com.fasterxml.jackson.annotation.JsonFormat.Shape.STRING;
@@ -45,8 +43,8 @@ public class Order implements Serializable {
     private static final long serialVersionUID = -8902304584597040749L;
 
     @Id
-    @GeneratedValue(strategy = IDENTITY)
     @JsonProperty("code")
+    @GeneratedValue(strategy = IDENTITY)
     private Long id;
 
     @JsonProperty("orderedAt")
@@ -58,7 +56,7 @@ public class Order implements Serializable {
 
     @JsonIgnore
     @JsonProperty("items")
-    @OneToMany(mappedBy = "order", cascade = ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "id.order", cascade = ALL, orphanRemoval = true)
     private List<OrderItem> productList;
 
     @ManyToOne
@@ -68,8 +66,7 @@ public class Order implements Serializable {
     private User user;
 
     @ManyToOne
-    @JsonProperty("payment")
-    private Payment paymentMethod;
+    private Payment payment;
 
     public Double total() {
         return this.productList
