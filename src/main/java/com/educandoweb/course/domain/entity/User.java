@@ -41,8 +41,8 @@ public class User implements Serializable {
     private static final long serialVersionUID = 8067165714208918931L;
 
     @Id
-    @GeneratedValue(strategy = IDENTITY)
     @JsonProperty("code")
+    @GeneratedValue(strategy = IDENTITY)
     private Long id;
 
     @JsonProperty("user")
