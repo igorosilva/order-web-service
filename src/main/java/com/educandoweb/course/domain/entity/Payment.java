@@ -50,4 +50,12 @@ public class Payment implements Serializable {
     @JsonIgnore
     @JsonProperty("order")
     private Order order;
+
+    public LocalDateTime getPaidAt() {
+        return this._paidAt;
+    }
+
+    public void setPaidAt(LocalDateTime paidAt) {
+        this._paidAt = paidAt;
+    }
 }
