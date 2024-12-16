@@ -8,4 +8,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long>, GenericRepository<User> {
     boolean existsByNmUserOrDsEmail(String nmUser, String dsEmail);
+    boolean existsByNmUser(String nmUser);
 }
