@@ -9,13 +9,16 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import static com.educandoweb.course.util.Constants.ENTITY_EXISTS;
 import static com.educandoweb.course.util.Constants.OPERATION_END;
 import static com.educandoweb.course.util.Constants.OPERATION_START;
+import static com.educandoweb.course.util.Constants.SAVE_OPERATION;
+import static com.educandoweb.course.util.Constants.UPDATE_OPERATION;
 
 @Slf4j
 @Service
 public class ProductService extends GenericService<Product> {
+
+    private static final Class<Product> PRODUCT_CLASS = Product.class;
 
     private ProductRepository repository;
 
@@ -25,50 +28,74 @@ public class ProductService extends GenericService<Product> {
     }
 
     public Product saveProduct(Product request) {
-        loggingOperation(OPERATION_START, Product.class);
+        loggingOperation(OPERATION_START, PRODUCT_CLASS);
 
-        Product response = save(request, Product.class);
+        validateProductRequest(request, SAVE_OPERATION);
+
+        Product response = create(request, PRODUCT_CLASS);
         
-        loggingOperation(OPERATION_END, Product.class);
+        loggingOperation(OPERATION_END, PRODUCT_CLASS);
 
         return response;
     }
 
     public Product findProductById(Long id) {
-        loggingOperation(OPERATION_START, Product.class);
+        loggingOperation(OPERATION_START, PRODUCT_CLASS);
 
-        Product response = findById(id, Product.class);
+        Product response = findById(id, PRODUCT_CLASS);
         
-        loggingOperation(OPERATION_END, Product.class);
+        loggingOperation(OPERATION_END, PRODUCT_CLASS);
         
         return response;
     }
 
     public List<Product> findAllProducts() {
-        loggingOperation(OPERATION_START, Product.class);
+        loggingOperation(OPERATION_START, PRODUCT_CLASS);
 
-        List<Product> response = findAll(Product.class);
+        List<Product> response = findAll(PRODUCT_CLASS);
         
-        loggingOperation(OPERATION_END, Product.class);
+        loggingOperation(OPERATION_END, PRODUCT_CLASS);
         
         return response;
     }
 
     public Product updateProduct(Long id, Product request) {
-        loggingOperation(OPERATION_START, Product.class);
+        loggingOperation(OPERATION_START, PRODUCT_CLASS);
 
-        Product response = update(id, request, Product.class);
+        validateProductRequest(request, UPDATE_OPERATION);
 
-        loggingOperation(OPERATION_END, Product.class);
+        Product response = update(id, request, PRODUCT_CLASS);
+
+        loggingOperation(OPERATION_END, PRODUCT_CLASS);
 
         return response;
     }
 
     public void deleteProduct(Long id) {
-        loggingOperation(OPERATION_START, Product.class);
+        loggingOperation(OPERATION_START, PRODUCT_CLASS);
 
-        delete(id, Product.class);
+        delete(id, PRODUCT_CLASS);
 
-        loggingOperation(OPERATION_END, Product.class);
+        loggingOperation(OPERATION_END, PRODUCT_CLASS);
+    }
+
+    private void validateProductRequest(Product request, String operation) {
+        String productName = request.getDsName();
+        boolean productNameIsEmpty = productName.isBlank() || productName.isEmpty();
+
+        if(request.getVlPrice() <= 0) {
+            loggingError("operation." + operation + ".fail", PRODUCT_CLASS);
+            throw new RuntimeException("The price can't be less or equal to 0");
+        }
+
+        if(productNameIsEmpty) {
+            loggingError("operation." + operation + ".fail", PRODUCT_CLASS);
+            throw new RuntimeException("The product name can't be empty");
+        }
+
+        if(request.getOrderList().isEmpty()) {
+            loggingError("operation." + operation + ".fail", PRODUCT_CLASS);
+            throw new RuntimeException("The order list can't be empty");
+        }
     }
 }
