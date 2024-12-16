@@ -23,6 +23,8 @@ public class Constants {
     public static final String TB_PAYMENT = "tb_payment";
     public static final String TB_PRODUCT = "tb_product";
     public static final String TB_CATEGORY = "tb_category";
+    public static final String TB_ORDER_ITEM = "tb_order_item";
+    public static final String TB_PRODUCT_CATEGORY = "tb_product_category";
 
     public static final String ENTITY_FOUND = "entity.found";
     public static final String ENTITY_EXISTS = "entity.exists";
@@ -36,11 +38,17 @@ public class Constants {
     public static final String ENTITY_UPDATED_SUCCESS = "entity.updated.success";
     public static final String ENTITY_DELETED_SUCCESS = "entity.deleted.success";
 
+    public static final String SAVE_OPERATION = "save";
+    public static final String UPDATE_OPERATION = "update";
+    public static final String SEARCH_OPERATION = "search";
+    public static final String DELETE_OPERATION = "delete";
+
     public static final String OPERATION_END = "operation.end";
     public static final String OPERATION_START = "operation.start";
     public static final String OPERATION_SAVE_FAIL = "operation.save.fail";
     public static final String OPERATION_UPDATE_FAIL = "operation.update.fail";
     public static final String OPERATION_SEARCH_FAIL = "operation.search.fail";
+    public static final String OPERATION_DELETE_FAIL = "operation.delete.fail";
     public static final String OPERATION_SAVE_COMPLETE = "operation.save.complete";
     public static final String OPERATION_SEARCH_COMPLETE = "operation.search.complete";
     public static final String OPERATION_UPDATE_COMPLETE = "operation.update.complete";
