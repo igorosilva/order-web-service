@@ -26,6 +26,7 @@ import static com.educandoweb.course.util.Constants.TB_PRODUCT;
 import static com.educandoweb.course.util.Constants.TB_PRODUCT_CATEGORY;
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 import static jakarta.persistence.GenerationType.IDENTITY;
+import static java.util.stream.Collectors.toSet;
 
 @Setter
 @Entity
@@ -65,7 +66,6 @@ public class Product implements Serializable {
     private Set<Category> categoryList = new HashSet<>();
 
     @JsonIgnore
-    @JsonProperty("orders")
     @OneToMany(mappedBy = "id.product")
     private Set<OrderItem> orderList = new HashSet<>();
 
@@ -110,6 +110,13 @@ public class Product implements Serializable {
 
     public Set<OrderItem> getOrderList() {
         return orderList;
+    }
+
+    @JsonIgnore
+    public Set<Order> getOrders() {
+        return orderList.stream()
+                .map(OrderItem::getOrder)
+                .collect(toSet());
     }
 
     @Override
