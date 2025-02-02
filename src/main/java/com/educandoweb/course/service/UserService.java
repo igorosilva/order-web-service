@@ -22,11 +22,13 @@ public class UserService extends GenericService<User> {
 
     private static final Class<User> USER_CLASS = User.class;
 
-    private UserRepository repository;
+    private final UserRepository repository;
+    private final OrderRepository orderRepository;
 
-    public UserService(GenericRepository<User> repository, MessageSource messageSource) {
+    public UserService(GenericRepository<User> repository, MessageSource messageSource, OrderRepository orderRepository) {
         super(repository, messageSource);
         this.repository = (UserRepository) repository;
+        this.orderRepository = orderRepository;
     }
 
     public User saveUser(User request) {
@@ -93,14 +95,10 @@ public class UserService extends GenericService<User> {
 
         User response = findUserById(id);
 
-        if (!response.getOrderList().isEmpty()) {
-            response.getOrderList().stream()
-                    .filter(order -> SHIPPED.equals(order.getOrderStatus()))
-                    .findFirst()
-                    .ifPresent(order -> {
-                        loggingError(OPERATION_DELETE_FAIL, USER_CLASS);
-                        throw new RuntimeException("An user with shipped order can't be deleted");
-                    });
+        boolean hasShippedOrders = orderRepository.existsByClientAndOrderStatus(response, SHIPPED);
+        if (hasShippedOrders) {
+            loggingError(OPERATION_DELETE_FAIL, USER_CLASS);
+            throw new RuntimeException("An user with shipped order can't be deleted");
         }
 
         delete(id, USER_CLASS);
