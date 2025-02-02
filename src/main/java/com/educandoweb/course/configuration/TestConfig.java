@@ -21,6 +21,7 @@ import org.springframework.context.annotation.Profile;
 import java.time.LocalDateTime;
 
 import static com.educandoweb.course.domain.enums.OrderStatus.PAID;
+import static com.educandoweb.course.domain.enums.OrderStatus.SHIPPED;
 import static com.educandoweb.course.domain.enums.OrderStatus.WAITING_PAYMENT;
 import static com.educandoweb.course.util.Constants.PROFILE_TEST;
 import static java.time.LocalDateTime.now;
@@ -68,7 +69,7 @@ public class TestConfig implements CommandLineRunner {
         User user2 = createUser("Alex Green", "alex@gmail.com", "977777777");
 
         Order order1 = createOrder(PAID);
-        Order order2 = createOrder(WAITING_PAYMENT);
+        Order order2 = createOrder(SHIPPED);
         Order order3 = createOrder(WAITING_PAYMENT);
 
         userRepository.saveAll(asList(user1, user2));
