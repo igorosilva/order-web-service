@@ -6,36 +6,29 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.EqualsAndHashCode.Include;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.FieldNameConstants;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.Objects;
 
 import static com.educandoweb.course.util.Constants.TB_USER;
 import static com.fasterxml.jackson.annotation.JsonFormat.Shape.STRING;
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 import static jakarta.persistence.GenerationType.IDENTITY;
 
-@Data
+@Setter
 @Entity
 @Builder
 @NoArgsConstructor
-@EqualsAndHashCode
 @FieldNameConstants
-@AllArgsConstructor
 @JsonInclude(NON_NULL)
 @Table(name = TB_USER)
 public class User implements Serializable {
@@ -70,22 +63,54 @@ public class User implements Serializable {
     @JsonFormat(shape = STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime _updatedAt;
 
-    @OneToMany
-    @JsonProperty("orders")
-    private Set<Order> orderList = new HashSet<>();
-
-    public User(Long id, String nmUser, String dsEmail, String nrPhone, String dsPassword) {
-        super();
+    public User(Long id, String nmUser, String dsEmail, String nrPhone, String dsPassword, LocalDateTime _createdAt, LocalDateTime _updatedAt) {
         this.id = id;
         this.nmUser = nmUser;
         this.dsEmail = dsEmail;
         this.nrPhone = nrPhone;
         this.dsPassword = dsPassword;
-    }
-
-    public User(Long id, String nmUser, String dsEmail, String nrPhone, String dsPassword, LocalDateTime _createdAt, LocalDateTime _updatedAt) {
-        this(id, nmUser, dsEmail, nrPhone, dsEmail);
         this._createdAt = _createdAt;
         this._updatedAt = _updatedAt;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getNmUser() {
+        return nmUser;
+    }
+
+    public String getDsEmail() {
+        return dsEmail;
+    }
+
+    public String getNrPhone() {
+        return nrPhone;
+    }
+
+    public String getDsPassword() {
+        return dsPassword;
+    }
+
+    public LocalDateTime get_createdAt() {
+        return _createdAt;
+    }
+
+    public LocalDateTime get_updatedAt() {
+        return _updatedAt;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return Objects.equals(id, user.id) && Objects.equals(nmUser, user.nmUser) && Objects.equals(dsEmail, user.dsEmail) && Objects.equals(nrPhone, user.nrPhone) && Objects.equals(dsPassword, user.dsPassword) && Objects.equals(_createdAt, user._createdAt) && Objects.equals(_updatedAt, user._updatedAt);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, nmUser, dsEmail, nrPhone, dsPassword, _createdAt, _updatedAt);
     }
 }
