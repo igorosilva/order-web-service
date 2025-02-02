@@ -1,6 +1,7 @@
 package com.educandoweb.course.domain.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.Entity;
@@ -31,6 +32,7 @@ import static jakarta.persistence.GenerationType.IDENTITY;
 @FieldNameConstants
 @JsonInclude(NON_NULL)
 @Table(name = TB_USER)
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class User implements Serializable {
 
     private static final long serialVersionUID = 8067165714208918931L;
@@ -93,12 +95,20 @@ public class User implements Serializable {
         return dsPassword;
     }
 
-    public LocalDateTime get_createdAt() {
+    public LocalDateTime getCreatedAt() {
         return _createdAt;
     }
 
-    public LocalDateTime get_updatedAt() {
+    public void setCreatedAt(LocalDateTime _createdAt) {
+        this._createdAt = _createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
         return _updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime _updatedAt) {
+        this._updatedAt = _updatedAt;
     }
 
     @Override

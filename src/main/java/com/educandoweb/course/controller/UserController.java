@@ -53,6 +53,10 @@ public class UserController {
 
         log.info(logBuilder(LOG_INFO, LOG_KEY_REQUEST), CLASS_NAME, getMethodName(), STEP_END);
 
+        if(response == null) {
+            return ResponseEntity.notFound().build();
+        }
+
         return ResponseEntity.ok(response);
     }
 
@@ -74,6 +78,10 @@ public class UserController {
         User response = service.updateUser(id, request);
 
         log.info(logBuilder(LOG_INFO, LOG_KEY_REQUEST), CLASS_NAME, getMethodName(), STEP_END);
+
+        if(response == null) {
+            return ResponseEntity.notFound().build();
+        }
 
         return ResponseEntity.ok(response);
     }

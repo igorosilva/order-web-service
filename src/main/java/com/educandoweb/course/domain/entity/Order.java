@@ -2,6 +2,7 @@ package com.educandoweb.course.domain.entity;
 
 import com.educandoweb.course.domain.enums.OrderStatus;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.Entity;
@@ -37,6 +38,7 @@ import static jakarta.persistence.GenerationType.IDENTITY;
 @FieldNameConstants
 @JsonInclude(NON_NULL)
 @Table(name = TB_ORDER)
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Order implements Serializable {
 
     private static final long serialVersionUID = -8902304584597040749L;
@@ -115,7 +117,7 @@ public class Order implements Serializable {
         return Objects.hash(id, _orderedAt, orderStatus, client, productList, payment);
     }
 
-    public Double total() {
+    public Double getTotal() {
         return this.productList
                 .stream()
                 .mapToDouble(OrderItem::getSubTotal)

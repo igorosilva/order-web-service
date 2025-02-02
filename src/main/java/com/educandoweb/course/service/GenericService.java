@@ -3,6 +3,7 @@ package com.educandoweb.course.service;
 import com.educandoweb.course.repository.GenericRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.Hibernate;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 
@@ -46,7 +47,8 @@ public abstract class GenericService<T> {
     public T findById(Long id, Class<T> clazz) {
         loggingOperation(ENTITY_FINDING, clazz);
 
-        T object = (T) repository.findById(id);
+        T object = repository.getReferenceById(id);
+        Hibernate.initialize(object);
 
         loggingOperation(ENTITY_FOUND, clazz);
 

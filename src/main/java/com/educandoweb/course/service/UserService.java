@@ -1,5 +1,6 @@
 package com.educandoweb.course.service;
 
+import com.educandoweb.course.domain.entity.Order;
 import com.educandoweb.course.domain.entity.User;
 import com.educandoweb.course.repository.GenericRepository;
 import com.educandoweb.course.repository.OrderRepository;
@@ -9,6 +10,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
 
 import static com.educandoweb.course.domain.enums.OrderStatus.SHIPPED;
 import static com.educandoweb.course.util.Constants.OPERATION_DELETE_FAIL;
@@ -35,7 +37,7 @@ public class UserService extends GenericService<User> {
     public User saveUser(User request) {
         loggingOperation(OPERATION_START, USER_CLASS);
 
-        isUsernameOrEmailExists(request.getNmUser(), request.getDsEmail(), OPERATION_SAVE_FAIL);
+        validateUser(request, OPERATION_SAVE_FAIL);
 
         if (request.getDsPassword().isBlank()) {
             loggingError(OPERATION_SAVE_FAIL, USER_CLASS);
@@ -72,19 +74,23 @@ public class UserService extends GenericService<User> {
     public User updateUser(Long id, User request) {
         loggingOperation(OPERATION_START, USER_CLASS);
 
-        User oldUser = findUserById(id);
+        User user = findUserById(id);
 
         String username = request.getNmUser();
         String email = request.getDsEmail();
 
-        boolean isNmUserChanged = !username.equals(oldUser.getNmUser());
-        boolean isDsEmailChanged = !email.equals(oldUser.getDsEmail());
+        boolean isNmUserChanged = !username.equals(user.getNmUser());
+        boolean isDsEmailChanged = !email.equals(user.getDsEmail());
 
-        if (isNmUserChanged || isDsEmailChanged) {
-            isUsernameOrEmailExists(username, email, OPERATION_UPDATE_FAIL);
+        if ((isNmUserChanged && isUsernameExists(username)) ||
+                (isDsEmailChanged && isEmailExists(email))) {
+            loggingError(OPERATION_UPDATE_FAIL, USER_CLASS);
+            throw new RuntimeException("Username or email already exists");
         }
 
-        User response = update(id, request, USER_CLASS);
+        updateUserData(user, request);
+
+        User response = create(user, USER_CLASS);
 
         loggingOperation(OPERATION_END, USER_CLASS);
 
@@ -107,11 +113,31 @@ public class UserService extends GenericService<User> {
         loggingOperation(OPERATION_END, USER_CLASS);
     }
 
-    private void isUsernameOrEmailExists(String user, String email, String errorMessage) {
-        if (repository.existsByNmUserOrDsEmail(user, email)) {
-            String message = getMessage(errorMessage);
+    private void validateUser(User user, String message) {
+        boolean userExists = isUsernameOrEmailExists(user.getNmUser(), user.getDsEmail());
+
+        if (userExists) {
             log.error(message);
             throw new RuntimeException(message);
         }
+    }
+
+    private boolean isUsernameOrEmailExists(String user, String email) {
+        return repository.existsByNmUserOrDsEmail(user, email);
+    }
+
+    private boolean isUsernameExists(String username) {
+        return repository.existsByNmUser(username);
+    }
+
+    private boolean isEmailExists(String email) {
+        return repository.existsByDsEmail(email);
+    }
+
+    private void updateUserData(User user, User request) {
+        user.setDsEmail(request.getDsEmail());
+        user.setNmUser(request.getNmUser());
+        user.setDsPassword(request.getDsPassword());
+        user.setNrPhone(request.getNrPhone());
     }
 }
