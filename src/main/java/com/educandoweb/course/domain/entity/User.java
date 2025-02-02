@@ -12,6 +12,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.EqualsAndHashCode.Include;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldNameConstants;
 import org.hibernate.annotations.CreationTimestamp;
@@ -19,9 +20,10 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
-import static com.educandoweb.course.domain.entity.Order.Fields.user;
 import static com.educandoweb.course.util.Constants.TB_USER;
 import static com.fasterxml.jackson.annotation.JsonFormat.Shape.STRING;
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
@@ -41,6 +43,7 @@ public class User implements Serializable {
     private static final long serialVersionUID = 8067165714208918931L;
 
     @Id
+    @Include
     @JsonProperty("code")
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
@@ -67,7 +70,22 @@ public class User implements Serializable {
     @JsonFormat(shape = STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime _updatedAt;
 
-    @OneToMany(mappedBy = user)
+    @OneToMany
     @JsonProperty("orders")
-    private List<Order> orderList;
+    private Set<Order> orderList = new HashSet<>();
+
+    public User(Long id, String nmUser, String dsEmail, String nrPhone, String dsPassword) {
+        super();
+        this.id = id;
+        this.nmUser = nmUser;
+        this.dsEmail = dsEmail;
+        this.nrPhone = nrPhone;
+        this.dsPassword = dsPassword;
+    }
+
+    public User(Long id, String nmUser, String dsEmail, String nrPhone, String dsPassword, LocalDateTime _createdAt, LocalDateTime _updatedAt) {
+        this(id, nmUser, dsEmail, nrPhone, dsEmail);
+        this._createdAt = _createdAt;
+        this._updatedAt = _updatedAt;
+    }
 }
