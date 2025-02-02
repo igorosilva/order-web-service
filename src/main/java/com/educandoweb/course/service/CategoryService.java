@@ -80,7 +80,7 @@ public class CategoryService extends GenericService<Category> {
     }
 
     private void validateCategoryRequest(Category request, String operation) {
-        String categoryName = request.getDsName();
+        String categoryName = request.getNmCategory();
         boolean categoryNameIsEmpty = categoryName.isEmpty() || categoryName.isBlank();
 
         if(categoryNameIsEmpty) {
@@ -88,7 +88,7 @@ public class CategoryService extends GenericService<Category> {
             throw new RuntimeException("Category name can't be empty");
         }
 
-        if(repository.existsByName(categoryName)) {
+        if(repository.existsByNmCategory (categoryName)) {
             loggingError("operation." + operation + ".fail", CATEGORY_CLASS);
             throw new RuntimeException("Category name already exists");
         }

@@ -5,5 +5,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface CategoryRepository extends GenericRepository<Category> {
-    boolean existsByName(String name);
+    boolean existsByNmCategory (String nmCategory);
 }
