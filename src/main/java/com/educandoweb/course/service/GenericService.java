@@ -1,11 +1,13 @@
 package com.educandoweb.course.service;
 
+import com.educandoweb.course.exception.DatabaseException;
+import com.educandoweb.course.exception.NotFoundException;
 import com.educandoweb.course.repository.GenericRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.Hibernate;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.dao.DataIntegrityViolationException;
 
 import java.util.List;
 
@@ -47,8 +49,8 @@ public abstract class GenericService<T> {
     public T findById(Long id, Class<T> clazz) {
         loggingOperation(ENTITY_FINDING, clazz);
 
-        T object = repository.getReferenceById(id);
-        Hibernate.initialize(object);
+        T object = repository.findById(id)
+                .orElseThrow(() -> new NotFoundException(id));
 
         loggingOperation(ENTITY_FOUND, clazz);
 
@@ -82,13 +84,17 @@ public abstract class GenericService<T> {
     }
 
     public void delete(Long id, Class<T> clazz) {
-        findById(id, clazz);
+        try {
+            findById(id, clazz);
 
-        loggingOperation(ENTITY_DELETING, clazz);
+            loggingOperation(ENTITY_DELETING, clazz);
 
-        repository.deleteById(id);
+            repository.deleteById(id);
 
-        loggingOperation(ENTITY_DELETED_SUCCESS, clazz);
+            loggingOperation(ENTITY_DELETED_SUCCESS, clazz);
+        } catch (DataIntegrityViolationException exception) {
+            throw new DatabaseException(exception.getMessage());
+        }
     }
 
     protected void loggingOperation(String message, Class<?> clazz) {
