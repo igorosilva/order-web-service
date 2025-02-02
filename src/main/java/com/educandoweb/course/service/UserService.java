@@ -12,7 +12,6 @@ import java.util.List;
 import static com.educandoweb.course.domain.enums.OrderStatus.SHIPPED;
 import static com.educandoweb.course.util.Constants.OPERATION_DELETE_FAIL;
 import static com.educandoweb.course.util.Constants.OPERATION_END;
-import static com.educandoweb.course.util.Constants.OPERATION_SAVE_COMPLETE;
 import static com.educandoweb.course.util.Constants.OPERATION_SAVE_FAIL;
 import static com.educandoweb.course.util.Constants.OPERATION_START;
 import static com.educandoweb.course.util.Constants.OPERATION_UPDATE_FAIL;
