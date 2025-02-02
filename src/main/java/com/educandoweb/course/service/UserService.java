@@ -2,6 +2,7 @@ package com.educandoweb.course.service;
 
 import com.educandoweb.course.domain.entity.User;
 import com.educandoweb.course.repository.GenericRepository;
+import com.educandoweb.course.repository.OrderRepository;
 import com.educandoweb.course.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.MessageSource;
