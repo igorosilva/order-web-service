@@ -1,6 +1,8 @@
 package com.educandoweb.course.service;
 
+import com.educandoweb.course.domain.entity.User;
 import com.educandoweb.course.repository.GenericRepository;
+import com.educandoweb.course.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -11,52 +13,76 @@ import org.springframework.context.MessageSource;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.Locale;
+import java.util.Optional;
 
+import static com.educandoweb.course.factory.UserFactory.createUser;
+import static java.util.Optional.ofNullable;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.CALLS_REAL_METHODS;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class GenericServiceTest<T> {
+public class GenericServiceTest {
 
     @InjectMocks
-    private GenericService<T> service;
+    private UserService service;
 
     @Mock
-    private GenericRepository<T> repository;
+    private UserRepository repository;
 
     @Mock
     private MessageSource messageSource;
 
-    private T object;
+    private User user;
 
-    private Class<T> objectClass;
+    private Class<User> userClass = User.class;
 
     @BeforeEach
     void setUp() {
-        service = mock(GenericService.class, CALLS_REAL_METHODS);
-
-        ReflectionTestUtils.setField(service, "repository", repository);
-        ReflectionTestUtils.setField(service, "messageSource", messageSource);
+        user = createUser();
 
         lenient().when(messageSource.getMessage(anyString(), any(), any(Locale.class))).thenReturn("Message test");
     }
 
     void prepareWhen() {
-        lenient().when(repository.save(any())).thenReturn(object);
+        lenient().when(repository.save(any())).thenReturn(user);
+        lenient().when(repository.findById(anyLong())).thenReturn(ofNullable(user));
+    }
+
+    void verifyCommonMethods(int times) {
+        verify(messageSource, times(times)).getMessage(anyString(), any(), any(Locale.class));
+    }
+
+    void assertResult(Object expected, Object result, int times) {
+        verifyCommonMethods(times);
+
+        assertNotNull(result);
+        assertEquals(expected, result);
     }
 
     @Test
-    void testCreateObject() {
+    void testCreate() {
         prepareWhen();
 
-        var result = service.create((T) object, objectClass);
+        var result = service.create(user, userClass);
 
-        assertNotNull(result);
-        assertEquals(object, result);
+        assertResult(user, result, 3);
+    }
+
+    @Test
+    void testFindById_whenSuccess() {
+        prepareWhen();
+
+        var result = service.findById(user.getId(), userClass);
+
+        assertResult(user, result, 3);
     }
 }
