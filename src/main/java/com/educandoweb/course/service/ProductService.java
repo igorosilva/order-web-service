@@ -1,6 +1,7 @@
 package com.educandoweb.course.service;
 
 import com.educandoweb.course.domain.entity.Product;
+import com.educandoweb.course.exception.IllegalArgumentException;
 import com.educandoweb.course.repository.GenericRepository;
 import com.educandoweb.course.repository.ProductRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -82,20 +83,21 @@ public class ProductService extends GenericService<Product> {
     private void validateProductRequest(Product request, String operation) {
         String productName = request.getNmProduct();
         boolean productNameIsEmpty = productName.isBlank() || productName.isEmpty();
+        String logErrorMessage = "operation." + operation + ".fail";
 
         if(request.getVlPrice() <= 0) {
-            loggingError("operation." + operation + ".fail", PRODUCT_CLASS);
-            throw new RuntimeException("The price can't be less or equal to 0");
+            loggingError(logErrorMessage, PRODUCT_CLASS);
+            throw new IllegalArgumentException("The price can't be less or equal to 0");
         }
 
         if(productNameIsEmpty) {
-            loggingError("operation." + operation + ".fail", PRODUCT_CLASS);
-            throw new RuntimeException("The product name can't be empty");
+            loggingError(logErrorMessage, PRODUCT_CLASS);
+            throw new IllegalArgumentException("The product name can't be empty");
         }
 
         if(request.getOrderList().isEmpty()) {
-            loggingError("operation." + operation + ".fail", PRODUCT_CLASS);
-            throw new RuntimeException("The order list can't be empty");
+            loggingError(logErrorMessage, PRODUCT_CLASS);
+            throw new IllegalArgumentException("The order list can't be empty");
         }
     }
 }
