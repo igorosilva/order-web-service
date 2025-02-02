@@ -3,7 +3,6 @@ package com.educandoweb.course.factory;
 import com.educandoweb.course.domain.entity.User;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 public class UserFactory {
 
@@ -18,7 +17,6 @@ public class UserFactory {
                 .dsPassword("dsPassword")
                 ._createdAt(now)
                 ._updatedAt(now)
-                .orderList(List.of())
                 .build();
     }
 }
