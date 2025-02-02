@@ -14,7 +14,6 @@ import static com.educandoweb.course.util.Constants.ENTITY_DELETING;
 import static com.educandoweb.course.util.Constants.ENTITY_FINDING;
 import static com.educandoweb.course.util.Constants.ENTITY_FINDING_ALL;
 import static com.educandoweb.course.util.Constants.ENTITY_FOUND;
-import static com.educandoweb.course.util.Constants.ENTITY_NOT_FOUND_BY_ID;
 import static com.educandoweb.course.util.Constants.ENTITY_SAVING;
 import static com.educandoweb.course.util.Constants.ENTITY_UPDATED_SUCCESS;
 import static com.educandoweb.course.util.Constants.OPERATION_SAVE_COMPLETE;
@@ -47,11 +46,7 @@ public abstract class GenericService<T> {
     public T findById(Long id, Class<T> clazz) {
         loggingOperation(ENTITY_FINDING, clazz);
 
-        T object = repository.findById(id).orElseThrow(() -> {
-            String message = getMessage(ENTITY_NOT_FOUND_BY_ID);
-            log.error(message);
-            return new RuntimeException(message);
-        });
+        T object = (T) repository.findById(id);
 
         loggingOperation(ENTITY_FOUND, clazz);
 
