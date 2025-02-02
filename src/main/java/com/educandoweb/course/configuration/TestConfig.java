@@ -2,9 +2,12 @@ package com.educandoweb.course.configuration;
 
 import com.educandoweb.course.domain.entity.Category;
 import com.educandoweb.course.domain.entity.Order;
+import com.educandoweb.course.domain.entity.OrderItem;
 import com.educandoweb.course.domain.entity.Product;
 import com.educandoweb.course.domain.entity.User;
+import com.educandoweb.course.domain.entity.pk.OrderItemPK;
 import com.educandoweb.course.repository.CategoryRepository;
+import com.educandoweb.course.repository.OrderItemRepository;
 import com.educandoweb.course.repository.OrderRepository;
 import com.educandoweb.course.repository.ProductRepository;
 import com.educandoweb.course.repository.UserRepository;
@@ -14,7 +17,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 import static com.educandoweb.course.domain.enums.OrderStatus.WAITING_PAYMENT;
 import static com.educandoweb.course.util.Constants.PROFILE_TEST;
@@ -31,42 +33,83 @@ public class TestConfig implements CommandLineRunner {
     private final OrderRepository orderRepository;
     private final CategoryRepository categoryRepository;
     private final ProductRepository productRepository;
+    private final OrderItemRepository orderItemRepository;
 
     @Override
     public void run(String... args) throws Exception {
-        User user1 = createUser("Maria Brown", "maria@gmail.com", "988888888");
-        User user2 = createUser("Alex Green", "alex@gmail.com", "977777777");
-
-        Order order1 = createOrder(user1);
-        Order order2 = createOrder(user2);
-        Order order3 = createOrder(user1);
-
-        Product product1 = new Product(null, "Smartphone", "Latest smartphone", 599.99, "url1");
-        Product product2 = new Product(null, "Laptop", "Gaming laptop", 1199.99, "url2");
-
         Category category1 = createCategory("Electronics");
         Category category2 = createCategory("Books");
         Category category3 = createCategory("Computers");
 
-        product1.getCategoryList().add(category1);
+        Product product1 = createProduct("The Lord of the Rings", "Lorem ipsum dolor sit amet, consectetur.", 90.5);
+        Product product2 = createProduct("Smart TV", "Nulla eu imperdiet purus. Maecenas ante.", 2190.0);
+        Product product3 = createProduct("Macbook Pro", "Nam eleifend maximus tortor, at mollis.", 1250.0);
+        Product product4 = createProduct("PC Gamer", "Donec aliquet odio ac rhoncus cursus.", 1200.0);
+        Product product5 = createProduct("Rails for Dummies", "Cras fringilla convallis sem vel faucibus.", 100.99);
+
+        categoryRepository.saveAll(asList(category1, category2, category3));
+        productRepository.saveAll(asList(product1, product2, product3, product4, product5));
+
+        product1.getCategoryList().add(category2);
         product2.getCategoryList().add(category1);
         product2.getCategoryList().add(category3);
+        product3.getCategoryList().add(category3);
+        product4.getCategoryList().add(category3);
+        product5.getCategoryList().add(category2);
 
-        userRepository.saveAll(asList(user1, user2));
+        productRepository.saveAll(asList(product1, product2, product3, product4, product5));
+
+        User user1 = createUser("Maria Brown", "maria@gmail.com", "988888888");
+        User user2 = createUser("Alex Green", "alex@gmail.com", "977777777");
+
+        Order order1 = createOrder();
+        Order order2 = createOrder();
+        Order order3 = createOrder();
+
+        user1.getOrderList().add(order1);
+        user1.getOrderList().add(order2);
+        user2.getOrderList().add(order3);
+
         orderRepository.saveAll(asList(order1, order2, order3));
-        categoryRepository.saveAll(asList(category1, category2, category3));
-        productRepository.saveAll(asList(product1, product2));
+        userRepository.saveAll(asList(user1, user2));
+
+        OrderItem orderItem1 = createOrderItem(order1, product1, 2, product1.getVlPrice());
+        OrderItem orderItem2 = createOrderItem(order1, product3, 1, product3.getVlPrice());
+        OrderItem orderItem3 = createOrderItem(order2, product3, 2, product3.getVlPrice());
+        OrderItem orderItem4 = createOrderItem(order3, product5, 2, product5.getVlPrice());
+
+        order1.getProductList().add(orderItem1);
+        order1.getProductList().add(orderItem2);
+        order2.getProductList().add(orderItem3);
+        order3.getProductList().add(orderItem4);
+
+        orderItemRepository.saveAll(asList(orderItem1, orderItem2, orderItem3, orderItem4));
+        orderRepository.saveAll(asList(order1, order2, order3));
     }
 
     private User createUser(String userName, String email, String phone) {
-        return new User(null, userName, email, phone, "123456", now, now, List.of());
+        return new User(null, userName, email, phone, "123456", now, now);
     }
 
-    private Order createOrder(User user) {
-        return new Order(null, now, WAITING_PAYMENT, List.of(), user, null);
+    private Order createOrder() {
+        return new Order(null, now, WAITING_PAYMENT, null);
     }
 
     private Category createCategory(String name) {
         return new Category(null, name);
+    }
+
+    private Product createProduct(String name, String description, Double price) {
+        return new Product(null, name, description, price, "");
+    }
+
+    private OrderItemPK createOrderItemPK(Order order, Product product) {
+        return new OrderItemPK(order, product);
+    }
+
+    private OrderItem createOrderItem(Order order, Product product, int quantity, double price) {
+        OrderItemPK orderItemPK = createOrderItemPK(order, product);
+
+        return new OrderItem(orderItemPK, quantity, price);
     }
 }
