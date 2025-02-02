@@ -3,12 +3,14 @@ package com.educandoweb.course.configuration;
 import com.educandoweb.course.domain.entity.Category;
 import com.educandoweb.course.domain.entity.Order;
 import com.educandoweb.course.domain.entity.OrderItem;
+import com.educandoweb.course.domain.entity.Payment;
 import com.educandoweb.course.domain.entity.Product;
 import com.educandoweb.course.domain.entity.User;
-import com.educandoweb.course.domain.entity.pk.OrderItemPK;
+import com.educandoweb.course.domain.enums.OrderStatus;
 import com.educandoweb.course.repository.CategoryRepository;
 import com.educandoweb.course.repository.OrderItemRepository;
 import com.educandoweb.course.repository.OrderRepository;
+import com.educandoweb.course.repository.PaymentRepository;
 import com.educandoweb.course.repository.ProductRepository;
 import com.educandoweb.course.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,8 +20,10 @@ import org.springframework.context.annotation.Profile;
 
 import java.time.LocalDateTime;
 
+import static com.educandoweb.course.domain.enums.OrderStatus.PAID;
 import static com.educandoweb.course.domain.enums.OrderStatus.WAITING_PAYMENT;
 import static com.educandoweb.course.util.Constants.PROFILE_TEST;
+import static java.time.LocalDateTime.now;
 import static java.util.Arrays.asList;
 
 @Configuration
@@ -27,13 +31,14 @@ import static java.util.Arrays.asList;
 @RequiredArgsConstructor
 public class TestConfig implements CommandLineRunner {
 
-    private static final LocalDateTime now = LocalDateTime.now();
+    private static final LocalDateTime now = now();
 
     private final UserRepository userRepository;
     private final OrderRepository orderRepository;
     private final CategoryRepository categoryRepository;
     private final ProductRepository productRepository;
     private final OrderItemRepository orderItemRepository;
+    private final PaymentRepository paymentRepository;
 
     @Override
     public void run(String... args) throws Exception {
@@ -62,9 +67,9 @@ public class TestConfig implements CommandLineRunner {
         User user1 = createUser("Maria Brown", "maria@gmail.com", "988888888");
         User user2 = createUser("Alex Green", "alex@gmail.com", "977777777");
 
-        Order order1 = createOrder();
-        Order order2 = createOrder();
-        Order order3 = createOrder();
+        Order order1 = createOrder(PAID);
+        Order order2 = createOrder(WAITING_PAYMENT);
+        Order order3 = createOrder(WAITING_PAYMENT);
 
         userRepository.saveAll(asList(user1, user2));
 
@@ -86,14 +91,19 @@ public class TestConfig implements CommandLineRunner {
 
         orderItemRepository.saveAll(asList(orderItem1, orderItem2, orderItem3, orderItem4));
         orderRepository.saveAll(asList(order1, order2, order3));
+
+        Payment payment1 = createPayment(now.plusHours(22), order1);
+        order1.setPayment(payment1);
+
+        orderRepository.saveAll(asList(order1));
     }
 
     private User createUser(String userName, String email, String phone) {
         return new User(null, userName, email, phone, "123456", now, now);
     }
 
-    private Order createOrder() {
-        return new Order(null, now, WAITING_PAYMENT, null);
+    private Order createOrder(OrderStatus status) {
+        return new Order(null, now, status, null);
     }
 
     private Category createCategory(String name) {
@@ -106,5 +116,9 @@ public class TestConfig implements CommandLineRunner {
 
     private OrderItem createOrderItem(Order order, Product product, int quantity, double price) {
         return new OrderItem(order, product, quantity, price);
+    }
+
+    private Payment createPayment(LocalDateTime time, Order order) {
+        return new Payment(null, time, order);
     }
 }

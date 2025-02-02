@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.MapsId;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.Builder;
@@ -45,6 +46,7 @@ public class Payment implements Serializable {
     @JsonFormat(shape = STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime _paidAt;
 
+    @MapsId
     @OneToOne
     @JsonIgnore
     @JsonProperty("order")
