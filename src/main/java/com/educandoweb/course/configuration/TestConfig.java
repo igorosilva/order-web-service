@@ -66,12 +66,13 @@ public class TestConfig implements CommandLineRunner {
         Order order2 = createOrder();
         Order order3 = createOrder();
 
-        user1.getOrderList().add(order1);
-        user1.getOrderList().add(order2);
-        user2.getOrderList().add(order3);
+        userRepository.saveAll(asList(user1, user2));
+
+        order1.setClient(user1);
+        order2.setClient(user1);
+        order3.setClient(user2);
 
         orderRepository.saveAll(asList(order1, order2, order3));
-        userRepository.saveAll(asList(user1, user2));
 
         OrderItem orderItem1 = createOrderItem(order1, product1, 2, product1.getVlPrice());
         OrderItem orderItem2 = createOrderItem(order1, product3, 1, product3.getVlPrice());
@@ -103,13 +104,7 @@ public class TestConfig implements CommandLineRunner {
         return new Product(null, name, description, price, "");
     }
 
-    private OrderItemPK createOrderItemPK(Order order, Product product) {
-        return new OrderItemPK(order, product);
-    }
-
     private OrderItem createOrderItem(Order order, Product product, int quantity, double price) {
-        OrderItemPK orderItemPK = createOrderItemPK(order, product);
-
-        return new OrderItem(orderItemPK, quantity, price);
+        return new OrderItem(order, product, quantity, price);
     }
 }
