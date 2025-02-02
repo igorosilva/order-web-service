@@ -80,7 +80,7 @@ public class ProductService extends GenericService<Product> {
     }
 
     private void validateProductRequest(Product request, String operation) {
-        String productName = request.getDsName();
+        String productName = request.getNmProduct();
         boolean productNameIsEmpty = productName.isBlank() || productName.isEmpty();
 
         if(request.getVlPrice() <= 0) {
