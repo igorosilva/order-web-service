@@ -1,7 +1,8 @@
 package com.educandoweb.course.service;
 
-import com.educandoweb.course.domain.entity.Order;
 import com.educandoweb.course.domain.entity.User;
+import com.educandoweb.course.exception.BusinessException;
+import com.educandoweb.course.exception.IllegalArgumentException;
 import com.educandoweb.course.repository.GenericRepository;
 import com.educandoweb.course.repository.OrderRepository;
 import com.educandoweb.course.repository.UserRepository;
@@ -10,7 +11,6 @@ import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Set;
 
 import static com.educandoweb.course.domain.enums.OrderStatus.SHIPPED;
 import static com.educandoweb.course.util.Constants.OPERATION_DELETE_FAIL;
@@ -41,7 +41,7 @@ public class UserService extends GenericService<User> {
 
         if (request.getDsPassword().isBlank()) {
             loggingError(OPERATION_SAVE_FAIL, USER_CLASS);
-            throw new RuntimeException("Your password can't be null or empty");
+            throw new IllegalArgumentException("Your password can't be null or empty");
         }
 
         User response = create(request, USER_CLASS);
@@ -85,7 +85,7 @@ public class UserService extends GenericService<User> {
         if ((isNmUserChanged && isUsernameExists(username)) ||
                 (isDsEmailChanged && isEmailExists(email))) {
             loggingError(OPERATION_UPDATE_FAIL, USER_CLASS);
-            throw new RuntimeException("Username or email already exists");
+            throw new BusinessException("Username or email already exists");
         }
 
         updateUserData(user, request);
@@ -105,7 +105,7 @@ public class UserService extends GenericService<User> {
         boolean hasShippedOrders = orderRepository.existsByClientAndOrderStatus(response, SHIPPED);
         if (hasShippedOrders) {
             loggingError(OPERATION_DELETE_FAIL, USER_CLASS);
-            throw new RuntimeException("An user with shipped order can't be deleted");
+            throw new BusinessException("An user with shipped order can't be deleted");
         }
 
         delete(id, USER_CLASS);
