@@ -15,25 +15,24 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.EqualsAndHashCode.Include;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldNameConstants;
 
 import java.io.Serializable;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import static com.educandoweb.course.util.Constants.TB_PRODUCT;
 import static com.educandoweb.course.util.Constants.TB_PRODUCT_CATEGORY;
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
-import static jakarta.persistence.CascadeType.ALL;
 import static jakarta.persistence.GenerationType.IDENTITY;
 
 @Data
 @Entity
 @Builder
 @NoArgsConstructor
-@EqualsAndHashCode
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @AllArgsConstructor
 @FieldNameConstants
 @JsonInclude(NON_NULL)
@@ -43,12 +42,13 @@ public class Product implements Serializable {
     private static final long serialVersionUID = 4336149754351482717L;
 
     @Id
+    @Include
     @JsonProperty("code")
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
 
     @JsonProperty("name")
-    private String dsName;
+    private String nmProduct;
 
     @JsonProperty("description")
     private String dsProduct;
@@ -67,19 +67,15 @@ public class Product implements Serializable {
     @JsonProperty("categories")
     private Set<Category> categoryList = new HashSet<>();
 
-    @ManyToMany
-    @JsonProperty("orders")
-    private List<Order> orderList;
-
     @JsonIgnore
     @JsonProperty("orders")
-    @OneToMany(mappedBy = "id.product", cascade = ALL)
-    private List<OrderItem> orderItems;
+    @OneToMany(mappedBy = "id.product")
+    private Set<OrderItem> orderList = new HashSet<>();
 
-    public Product(Long id, String dsName, String dsProduct, double vlPrice, String imgUrl) {
+    public Product(Long id, String nmProduct, String dsProduct, double vlPrice, String imgUrl) {
         super();
         this.id = id;
-        this.dsName = dsName;
+        this.nmProduct = nmProduct;
         this.dsProduct = dsProduct;
         this.vlPrice = vlPrice;
         this.imgUrl = imgUrl;
